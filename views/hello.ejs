@@ -12,7 +12,14 @@
         <h1><%= title %></h1>
     </header>
     <div role="main">
-        <p><%- content %></p>
+        <p class="h6"><%- content %></p>
+        <form action="/hello/post" method="POST">
+            <div class="form_group">
+                <label for="msg">Message:</label>
+                <input type="text" name="message" id="msg" class="form_control">
+            </div>
+            <input type="submit" value="送信する" class="btn btn_primary">
+        </form>
     </div>
 </body>
 </html>

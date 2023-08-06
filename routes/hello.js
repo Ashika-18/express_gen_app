@@ -3,8 +3,17 @@ const router = express.Router();
 
 router.get('/', (req, res, next) => {
     var data = {
-        title: '–Hello!–',
-        content: 'これはサンプルのコンテンツですよ！<br>this is sample content.'
+        title: 'Hello!',
+        content: '何か書いて送信して下さい'
+    };
+    res.render('hello', data);
+});
+
+router.post('/post', (req, res, next) => {
+    var msg = req.body['message'];
+    var data = {
+        title: 'Hello!',
+        content: 'あなたは、「' + msg + '」と送信しましたね。'
     };
     res.render('hello', data);
 });
