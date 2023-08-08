@@ -1,21 +1,31 @@
 const express = require('express');
 const router = express.Router();
+const http = require('https');
+const parseString = require('xml2js').parseString;
 
 router.get('/', (req, res, next) => {
-    var data = {
-        title: 'Hello!',
-        content: '何か書いて送信して下さい'
+    var opt = {
+        host: 'news.google.com',
+        port: 443,
+        path: '/rss?hl=js&ie=UTF-8&oe=UTF-8&gl=JP&ceid=JP:ja'
     };
-    res.render('hello', data);
-});
 
-router.post('/post', (req, res, next) => {
-    var msg = req.body['message'];
-    var data = {
-        title: 'Hello!',
-        content: 'あなたは、「' + msg + '」と送信しましたね。'
-    };
-    res.render('hello', data);
+    http.get(opt, (res2) => {
+        var body = '';
+        res2.on('data', (data) => {
+            body += data;
+        });
+        res2.on('end', () => {
+            parseString(body.trim(), (err, result) => {
+                console.log(result);
+                var data = {
+                    title: 'Google News',
+                    content: result.rss.channel[0].item
+                };
+                res.render('hello', data);
+            });
+        });
+    });
 });
 
 module.exports = router;

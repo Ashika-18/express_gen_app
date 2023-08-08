@@ -9,6 +9,9 @@ var usersRouter = require('./routes/users');
 //hello
 var helloRouter = require('./routes/hello'); 
 
+//session
+const session = require('express-session');
+
 var app = express();
 
 // view engine setup
@@ -20,6 +23,15 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
+
+//session
+var session_opt = {
+  secret: 'keyboard cat',
+  reserve: false,
+  saveUninitialized: false,
+  cookie: { maxAge: 60 * 60 * 1000 }
+};
+app.use(session(session_opt));
 
 app.use('/', indexRouter);
 app.use('/users', usersRouter);
