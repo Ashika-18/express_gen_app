@@ -7,7 +7,7 @@ router.get('/', (req, res, next) => {
     var opt = {
         host: 'news.google.com',
         port: 443,
-        path: '/rss?hl=js&ie=UTF-8&oe=UTF-8&gl=JP&ceid=JP:ja'
+        path: '/rss?hl=ja&ie=UTF-8&oe=UTF-8&gl=JP&ceid=JP:ja'
     };
 
     http.get(opt, (res2) => {
