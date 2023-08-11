@@ -1,30 +1,25 @@
 const express = require('express');
 const router = express.Router();
-const http = require('https');
-const parseString = require('xml2js').parseString;
 
+const sqlite3 = require('sqlite3');
+
+//データオブジェクトの取得
+const db = new sqlite3.Database('mydb.db');
+
+//GETアクセスの処理
 router.get('/', (req, res, next) => {
-    var opt = {
-        host: 'news.google.com',
-        port: 443,
-        path: '/rss?hl=ja&ie=UTF-8&oe=UTF-8&gl=JP&ceid=JP:ja'
-    };
-
-    http.get(opt, (res2) => {
-        var body = '';
-        res2.on('data', (data) => {
-            body += data;
-        });
-        res2.on('end', () => {
-            parseString(body.trim(), (err, result) => {
-                console.log(result);
-                var data = {
-                    title: 'Google News',
-                    content: result.rss.channel[0].item
-                };
-                res.render('hello', data);
-            });
-        });
+    //データベースのシリアライズ
+    db.serialize(() => {
+        //レコードを全て取り出す
+       db.all("select * from mydata", (err, rows) => {
+        if (!err) {
+            var data = {
+                title: 'Hello!',
+                content: rows
+            };
+            res.render('hello', data);
+        }
+       });
     });
 });
 
