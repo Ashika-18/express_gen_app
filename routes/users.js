@@ -3,23 +3,34 @@ var router = express.Router();
 
 const ps = require('@prisma/client');
 const prisma = new ps.PrismaClient();
-const pagesize = 5; //1ページ当たりのレコード数
+
+var lastCursor = 0;
+var cursor = 1;
+
+//ミドルウェアでカーソルを自動設定
+prisma.$use(async (params, next) => {
+    const result = await next(params);
+    cursor = result[result.length - 1].id;
+    if (cursor == lastCursor) {
+        cursor = 1;
+    }
+    lastCursor = cursor;
+    return result;
+});
 
 //userテーブルの表示
 router.get('/', (req, res, next) => {
-    const page = req.query.page ? +req.query.page : 0;
-
-    prisma.user.findMany({
-        orderBy: [{ id: 'asc'}],
-        skip: page * pagesize,
-        take: pagesize,
-    }).then( users => {
-        const data = {
-            title: 'Users/Index',
-            content: users
-        }
-        res.render('users/index', data);
-    });
+   prisma.user.findMany({
+    orderBy: [{id: 'asc'}],
+    cursor: {id:cursor},
+    teke:3,
+   }).then(users => {
+    const data = {
+        title: 'Users/Index',
+        content: users
+    }
+    res.render('users/index', data);
+   });
 });
 
 //LIKE検索
