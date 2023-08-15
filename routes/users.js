@@ -70,7 +70,7 @@ router.post('/add', (req, res, next) => {
     });
 });
 
-//更新の処理
+//updateの処理
 router.get('/edit/:id', (req, res, next) => {
     const id = req.params.id;
 
@@ -96,6 +96,29 @@ router.post('/edit', (req, res, next) => {
             pass: pass,
             age: +age
         }
+    }).then(() => {
+        res.redirect('/users');
+    });
+});
+
+//deleteの処理
+router.get('/delete/:id', (req, res, next) => {
+    const id = req.params.id;
+
+    prisma.user.findUnique(
+        { where: { id:+id } }
+    ).then(usr => {
+        const data = {
+            title: 'Users/Delete',
+            user:usr
+        };
+        res.render('users/delete', data);
+    });
+});
+
+router.post('/delete', (req, res, next) => {
+    prisma.User.delete({
+        where: { id:+req.body.id}
     }).then(() => {
         res.redirect('/users');
     });
