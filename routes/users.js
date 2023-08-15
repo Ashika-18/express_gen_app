@@ -6,10 +6,44 @@ const prisma = new ps.PrismaClient();
 
 //userテーブルの表示
 router.get('/', (req, res, next) => {
-    prisma.user.findMany().then(users=> {
-        const data = {
-            title: 'Users/Index',
-            content: users
+    const id = +req.query.id;
+    if (!id) {
+        prisma.user.findMany().then(users => {
+            const data = {
+                title: 'Users/Index',
+                content: users
+            }
+            res.render('users/index', data);
+        });
+    } else {
+        prisma.user.findMany({
+            where: { id: {lte: id} }
+        }).then(usrs => {
+            var data = {
+                title: 'Users/Index',
+                content: usrs
+            }
+            res.render('users/index', data);
+        });
+    }
+});
+
+//LIKE検索
+router.get('/find', (req, res, next) => {
+    const name = req.query.name;
+    const mail = req.query.mail;
+
+    prisma.user.findMany({
+        where: {
+            OR: [
+                { name: { contains: name } },
+                { mail: { contains: mail } }
+            ]
+        }
+    }).then(usrs => {
+        var data = {
+            title: 'Users/Find',
+            content: usrs
         }
         res.render('users/index', data);
     });
