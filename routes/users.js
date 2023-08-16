@@ -21,9 +21,9 @@ prisma.$use(async (params, next) => {
 //userテーブルの表示
 router.get('/', (req, res, next) => {
    prisma.user.findMany({
-    orderBy: [{id: 'asc'}],
+    orderBy: [{id:'asc'}],
     cursor: {id:cursor},
-    teke:3,
+    take:3,
    }).then(users => {
     const data = {
         title: 'Users/Index',
